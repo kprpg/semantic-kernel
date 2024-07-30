@@ -16,11 +16,12 @@ public sealed class Step1_Create_Kernel(ITestOutputHelper output) : BaseTest(out
     [Fact]
     public async Task RunAsync()
     {
-        // Create a kernel with OpenAI chat completion
+        // Create a kernel with Azure OpenAI chat completion
         Kernel kernel = Kernel.CreateBuilder()
-            .AddOpenAIChatCompletion(
-                modelId: TestConfiguration.OpenAI.ChatModelId,
-                apiKey: TestConfiguration.OpenAI.ApiKey)
+            .AddAzureOpenAIChatCompletion(
+                TestConfiguration.AzureOpenAI.ModelId,
+                TestConfiguration.AzureOpenAI.Endpoint,
+                TestConfiguration.AzureOpenAI.ApiKey)
             .Build();
 
         // Example 1. Invoke the kernel with a prompt and display the result
@@ -46,7 +47,7 @@ public sealed class Step1_Create_Kernel(ITestOutputHelper output) : BaseTest(out
 
         // Example 5. Invoke the kernel with a templated prompt and execution settings configured to return JSON
 #pragma warning disable SKEXP0010
-        arguments = new(new OpenAIPromptExecutionSettings { ResponseFormat = "json_object" }) { { "topic", "chocolate" } };
+        arguments = new(new OpenAIPromptExecutionSettings { ResponseFormat = "json" }) { { "topic", "chocolate" } };
         Console.WriteLine(await kernel.InvokePromptAsync("Create a recipe for a {{$topic}} cake in JSON format", arguments));
     }
 }
