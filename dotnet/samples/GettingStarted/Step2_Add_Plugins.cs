@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
+#define AZURE
 
 using System.ComponentModel;
 using System.Text.Json.Serialization;
@@ -21,9 +22,17 @@ public sealed class Step2_Add_Plugins(ITestOutputHelper output) : BaseTest(outpu
     {
         // Create a kernel with OpenAI chat completion
         IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
+
+#if AZURE
+        kernelBuilder.AddAzureOpenAIChatCompletion(
+                TestConfiguration.AzureOpenAI.ModelId,
+                TestConfiguration.AzureOpenAI.Endpoint,
+                TestConfiguration.AzureOpenAI.ApiKey);
+#else
         kernelBuilder.AddOpenAIChatCompletion(
                 modelId: TestConfiguration.OpenAI.ChatModelId,
                 apiKey: TestConfiguration.OpenAI.ApiKey);
+#endif
         kernelBuilder.Plugins.AddFromType<TimeInformation>();
         kernelBuilder.Plugins.AddFromType<WidgetFactory>();
         Kernel kernel = kernelBuilder.Build();
